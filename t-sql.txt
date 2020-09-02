@@ -1,0 +1,59 @@
+G III
+-- zad 1 
+
+CREATE TABLE EGZAMIN (
+	IdEgzamin Int Identity PRIMARY KEY,
+	IdPrzedmiot Int FOREGIN KEY REFERENCES Przedmiot,
+	DataEgzaminu Date
+
+);
+
+CREATE UNIQUE INDEX jedenEgzaminDziennieZPrzedmiotu
+	ON EGZAMIN(IdPrzedmiot, DataEgzaminu);
+	
+	CREATE TABLE ZAPISY (
+	IdEgzamin Int FOREGIN KEY REFERENCES EGZAMIN,
+	IdOsoba Int FOREGIN KEY REFERENCES OSOBA,
+	PRIMARY KEY (IdEgzamin, IdOsoba)
+	);
+go;	
+
+-- zad 2
+
+CREATE PROCEDURE DodajEgzamin
+@Przedmiot Varchar(40), @DataEgzaminu Date
+AS
+DECLARE @Info Varchar(200)
+BEGIN
+SET Nocount ON;
+IF EXISTS (SELECT 1 FROM Przedmiot WHERE Przedmiot = @Przedmiot)
+	AND NOT EXISTS (SELECT * FROM EGZAMIN WHERE 1 = (SELECT IdPrzedmiot FROM
+		Przedmiot WHERE Przedmiot = @Przedmiot)
+		AND Year (@DataEgzaminu) + Year(GetDate()))
+	
+	BEGIN
+		INSERT INTO EGZAMIN (IdPrzedmiot, DataEgzaminu)
+		VALUES ((SELECT IdPrzedmiot FROM Przedmiot WHERE Przedmiot = @Przedmiot), @DataEgzaminu);
+		SET @Info = 'Dodano Przedmiot o nazwie' + @Przedmiot;
+		PRINT @Info;
+	END;
+ELSE
+		SET @INFO = 'Podano zly przedmiot lub z tego przedmiotu jest juz egzamin w tym roku';
+		PRINT @INFO;
+END;
+
+go;
+
+-- zad3
+
+CREATE TRIGGER ZaDuzoOsob ON ZAPISY
+FOR INSERT
+AS
+BEGIN
+DECLARE @IdEgzamin Int, @IdOsoba Int, @Info Varchar (150);
+SELECT @IdEgzamin = IdEgzamin FROM Inserted;
+IF ((SELECT COUNT(1) FROM Zapisy WHERE IdEgzamin = @IdEgzamin) > 10)
+	Rollback;
+	SET @Info = 'Za duzo osob na egz. Student o nr. ' + @IdOsoba + ' prosze zglosic sie do prowadzacego.';
+	PRINT @INFO;
+END;

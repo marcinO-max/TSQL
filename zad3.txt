@@ -1,0 +1,6 @@
+ALTER TABLE Przedmioty ADD LiczbaOcen Int;
+CREATE TRIGGER OcenyTrigger ON Ocena FOR INSERT
+AS
+BEGIN
+UPDATE Przedmioty SET LiczbaOcen = (SELECT COUNT(1) FROM Ocena WHERE przedmiot.idprzedmiot = ocena.idprzedmiot);
+END;

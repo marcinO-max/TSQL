@@ -1,0 +1,19 @@
+-- zad 1
+
+CREATE TABLE ZACO (
+	IdZaCo	Int Identity	PRIMARY KEY,
+	IdPrzedmiot	Int FOREIGN KEY	REFERENCES	Ocena,
+	IdStudent	Int FOREIGN KEY	REFERENCES	Ocena,
+	DataWystawienia	Date FOREIGN KEY	REFERENCES	Ocena,
+	IdDydaktyk Int FOREIGN KEY REFERENCES Ocena,
+	Zaco VARCHAR (64)
+);
+
+INTO ZACO (IdStudent, IdPrzedmiot, DataWystawienia, ZaCo)
+VALUES (1, 1, 2018-10-10, 'Kolokwium')
+
+INTO ZACO (IdStudent, IdPrzedmiot, DataWystawienia, ZaCo)
+VALUES (2, 1, 2018-10-10, 'Kolokwium')
+
+INTO ZACO (IdStudent, IdPrzedmiot, DataWystawienia, ZaCo)
+VALUES (1, 2, 2018-11-11, 'Projekt')
